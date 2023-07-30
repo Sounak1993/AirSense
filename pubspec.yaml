@@ -40,6 +40,8 @@ dependencies:
   csv: ^5.0.2
   path_provider: ^2.0.15
   bluetooth_enable_fork: ^0.1.6
+  location: ^5.0.1
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
