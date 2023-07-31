@@ -40,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final _ble = FlutterReactiveBle();
   List<DiscoveredDevice> scanResults = [];
   StreamSubscription? _scanSubscription;
+  bool isDeviceConnected = false;
 
   @override
   // void initState() {
@@ -107,6 +108,67 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> connectToDevice(DiscoveredDevice device) async {
+    try {
+      final deviceConnection = _ble.connectToDevice(
+        id: device.id,
+        connectionTimeout: const Duration(seconds: 10),
+      );
+      await deviceConnection;
+      print('Connected to ${device.name}');
+
+      // Set the isDeviceConnected state to true after successful connection
+      Timer(Duration(seconds: 1), () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Connected Successfully'),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      isDeviceConnected = true;
+                    });
+                    Navigator.pop(context); // Close the dialog
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ConnectPage(device: device), // Pass the device as an argument
+                      ),
+                    );
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      });
+    }catch (error) {
+      print('Error connecting or reading characteristic: $error');
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Connection Failed'),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close the dialog
+                  setState(() {
+                    isDeviceConnected = false;
+                  });
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,17 +209,18 @@ class _MyHomePageState extends State<MyHomePage> {
                         trailing: ElevatedButton(
                           onPressed: (){
                             print('Dummy Connect');
+                            connectToDevice(device);
                           },
                           style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFB47A36)),
                           child: Text('Connect'),
                         ),
                         onTap: (){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ConnectPage(device: device), // Pass the device as an argument
-                            ),
-                          ); // Navigator
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => ConnectPage(device: device), // Pass the device as an argument
+                          //   ),
+                          // ); // Navigator
                           // print('Number : $uniqueFileNumber');
                           // connectToDevice(device,uniqueFileNumber);
                         },

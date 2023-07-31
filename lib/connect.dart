@@ -17,7 +17,7 @@ class ConnectPage extends StatefulWidget {
 }
 
 class _ConnectPageState extends State<ConnectPage> {
-  bool isDeviceConnected = false;
+  bool isDeviceConnected = true;
   bool isRecordStarted = false;
   bool stopTimer = false;
   final _ble = FlutterReactiveBle();
@@ -235,16 +235,16 @@ class _ConnectPageState extends State<ConnectPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: isDeviceConnected
-                            ? null
-                            : () {
-                          connectToDevice(widget.device);
-                        },
-                        child: Text('Connect to BLE Device'),
-                      ),
-                    ),
+                    // Expanded(
+                    //   child: ElevatedButton(
+                    //     onPressed: isDeviceConnected
+                    //         ? null
+                    //         : () {
+                    //       connectToDevice(widget.device);
+                    //     },
+                    //     child: Text('Connect to BLE Device'),
+                    //   ),
+                    // ),
                     IconButton(
                       onPressed: stopTimer ?
                           () {
